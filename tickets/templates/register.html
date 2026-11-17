@@ -1,0 +1,63 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="top-bar">
+            <span class="spacer"></span>
+            <h1>KAMPALA FOOTBALL CUP</h1>
+            <div class="actions">
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}<button type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">Login</a>
+                    <a href="{% url 'register' %}" class="btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'matches' %}">Matches</a></li>
+                <li><a href="{% url 'book' %}">Book Tickets</a></li>
+                <li><a href="{% url 'my_tickets' %}">View Tickets</a></li>
+                <li><a href="{% url 'payments' %}">Payment History</a></li>
+                <li><a href="{% url 'fixtures' %}">Fixtures</a></li>
+                <li><a href="{% url 'teams' %}">Teams</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+{% if messages %}
+<ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+{% endif %}
+
+<h1>Register here</h1>
+<p class="account">Form for user registration</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+        {{ field }}
+        {{ field.errors }}
+    {% endfor %}
+    <input type="submit" value="Register">
+</form>
+<p class="account">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+<footer class="site-footer">
+    <div class="container"><p>&copy; 2026 Kampala Football Cup. All rights reserved.</p></div>
+</footer>
+</body>
+</html>

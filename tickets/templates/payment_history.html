@@ -1,0 +1,73 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="top-bar">
+            <span class="spacer"></span>
+            <h1>KAMPALA FOOTBALL CUP</h1>
+            <div class="actions">
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}<button type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">Login</a>
+                    <a href="{% url 'register' %}" class="btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'matches' %}">Matches</a></li>
+                <li><a href="{% url 'book' %}">Book Tickets</a></li>
+                <li><a href="{% url 'my_tickets' %}">View Tickets</a></li>
+                <li><a href="{% url 'payments' %}">Payment History</a></li>
+                <li><a href="{% url 'fixtures' %}">Fixtures</a></li>
+                <li><a href="{% url 'teams' %}">Teams</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+{% if messages %}
+<ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+{% endif %}
+
+<h1>Payment History</h1>
+<p>Below is a table showing your payment transactions:</p>
+<table>
+    <tr><th>Match</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Action</th></tr>
+    {% for b in bookings %}
+    <tr>
+        <td>{{ b.match }}</td>
+        <td>UGX {{ b.total_price|floatformat:"0g" }}</td>
+        <td>{{ b.get_payment_method_display }}</td>
+        <td>{{ b.created_at|date:"Y-m-d" }}</td>
+        <td>{{ b.status }}</td>
+        <td>
+            {% if b.status == "Pending" %}
+                <a href="{% url 'pay' b.pk %}">Pay now</a>
+            {% else %}
+                Paid
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No payments yet.</td></tr>
+    {% endfor %}
+</table>
+
+<footer class="site-footer">
+    <div class="container"><p>&copy; 2026 Kampala Football Cup. All rights reserved.</p></div>
+</footer>
+</body>
+</html>

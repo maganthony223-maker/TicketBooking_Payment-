@@ -1,0 +1,86 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket View</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="top-bar">
+            <span class="spacer"></span>
+            <h1>KAMPALA FOOTBALL CUP</h1>
+            <div class="actions">
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}<button type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">Login</a>
+                    <a href="{% url 'register' %}" class="btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'matches' %}">Matches</a></li>
+                <li><a href="{% url 'book' %}">Book Tickets</a></li>
+                <li><a href="{% url 'my_tickets' %}">View Tickets</a></li>
+                <li><a href="{% url 'payments' %}">Payment History</a></li>
+                <li><a href="{% url 'fixtures' %}">Fixtures</a></li>
+                <li><a href="{% url 'teams' %}">Teams</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+{% if messages %}
+<ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+{% endif %}
+
+<h1>Ticket View</h1>
+<p>Here you can view your booked tickets and their details.</p>
+
+{% if has_pending %}
+<p class="notice">
+    Some of your tickets are <strong>not active yet</strong> because payment has not been confirmed.
+    Pay from <a href="{% url 'payments' %}">Payment History</a> to activate them.
+</p>
+{% endif %}
+
+<table>
+    <tr>
+        <th>Ticket ID</th><th>Match</th><th>Date</th><th>Time</th>
+        <th>Venue</th><th>Type</th><th>Seat Number(s)</th><th>Status</th>
+    </tr>
+    {% for b in bookings %}
+    <tr>
+        <td>{{ b.ticket_id }}</td>
+        <td>{{ b.match }}</td>
+        <td>{{ b.match.date|date:"Y-m-d" }}</td>
+        <td>{{ b.match.time|time:"H:i" }}</td>
+        <td>{{ b.match.venue }}</td>
+        <td>{{ b.get_ticket_type_display }} x{{ b.tickets }}</td>
+
+        {% if b.status == "Completed" %}
+            <td>{{ b.seat_number }}</td>
+            <td><span class="badge active">Active</span></td>
+        {% else %}
+            <td>Not assigned yet</td>
+            <td><span class="badge inactive">Not active - awaiting payment</span></td>
+        {% endif %}
+    </tr>
+    {% empty %}
+    <tr><td colspan="8">You have no tickets yet. <a href="{% url 'book' %}">Book one</a>.</td></tr>
+    {% endfor %}
+</table>
+
+<footer class="site-footer">
+    <div class="container"><p>&copy; 2026 Kampala Football Cup. All rights reserved.</p></div>
+</footer>
+</body>
+</html>

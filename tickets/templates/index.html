@@ -1,0 +1,70 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kampala Football Cup | Ticket Booking System</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="top-bar">
+            <span class="spacer"></span>
+            <h1>KAMPALA FOOTBALL CUP</h1>
+            <div class="actions">
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}<button type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">Login</a>
+                    <a href="{% url 'register' %}" class="btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'matches' %}">Matches</a></li>
+                <li><a href="{% url 'book' %}">Book Tickets</a></li>
+                <li><a href="{% url 'my_tickets' %}">View Tickets</a></li>
+                <li><a href="{% url 'payments' %}">Payment History</a></li>
+                <li><a href="{% url 'fixtures' %}">Fixtures</a></li>
+                <li><a href="{% url 'teams' %}">Teams</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+{% if messages %}
+<ul class="messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+{% endif %}
+
+<div class="intro">
+    <h2>Welcome to the Kampala Football Cup Ticket Booking System</h2>
+    <p>Book your tickets for the most exciting football matches in Kampala!</p>
+</div>
+
+<section class="hero">
+    <div class="container hero-inner">
+        <h2>Book your seat. Feel the roar.</h2>
+        <p>Get official tickets for every match of the Kampala Football Cup — fast, secure, and no queues.</p>
+        <a href="{% url 'matches' %}" class="btn btn-primary">View Upcoming Matches</a>
+    </div>
+</section>
+
+<section class="gallery">
+    <div class="container gallery">
+        <img src="{% static 'images/images (20).jpg' %}" alt="Players celebrating a goal on the pitch">
+        <img src="{% static 'images/images (22).jpg' %}" alt="Match action shot mid-game">
+        <img src="{% static 'images/images (19).jpg' %}" alt="Stadium view from above">
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="container"><p>&copy; 2026 Kampala Football Cup. All rights reserved.</p></div>
+</footer>
+</body>
+</html>
